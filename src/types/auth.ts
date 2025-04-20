@@ -53,3 +53,23 @@ export interface UserInfoResponse {
   user: User;
   session: Session;
 }
+
+export interface LoginStartRequest {
+  publicKey: string;
+}
+
+export interface LoginStartResponse {
+  challenge: string;
+}
+
+export interface LoginCompleteRequest {
+  publicKey: string;
+  challenge: ChallengeSubmission;
+  device: string;
+}
+
+export interface LoginCompleteResponse {
+  user: User;
+  session: Session;
+  token: string;
+}

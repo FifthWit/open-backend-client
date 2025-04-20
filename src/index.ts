@@ -2,7 +2,9 @@ import {
   fetchMeta,
   fetchRegisterStart,
   fetchRegisterComplete,
-  fetchUserInfo
+  fetchUserInfo,
+  fetchLoginStart,
+  fetchLoginComplete
 } from "./endpoints";
 
 import { 
@@ -11,7 +13,11 @@ import {
   RegisterStartResponse,
   RegisterCompleteRequest,
   RegisterCompleteResponse,
-  UserInfoResponse
+  UserInfoResponse,
+  LoginStartRequest,
+  LoginStartResponse,
+  LoginCompleteRequest,
+  LoginCompleteResponse
 } from "./types";
 
 export class PStreamBackend {
@@ -36,6 +42,16 @@ export class PStreamBackend {
 
   async registerComplete(request: RegisterCompleteRequest): Promise<RegisterCompleteResponse> {
     const response = await fetchRegisterComplete(this.backendUrl, request);
+    this.setAuthToken(response.token);
+    return response;
+  }
+
+  async loginStart(request: LoginStartRequest): Promise<LoginStartResponse> {
+    return fetchLoginStart(this.backendUrl, request);
+  }
+
+  async loginComplete(request: LoginCompleteRequest): Promise<LoginCompleteResponse> {
+    const response = await fetchLoginComplete(this.backendUrl, request);
     this.setAuthToken(response.token);
     return response;
   }
