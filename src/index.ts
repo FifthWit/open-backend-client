@@ -7,7 +7,9 @@ import {
   fetchLoginComplete,
   fetchMetricsProviders,
   fetchUpdateSession,
-  fetchDeleteSession
+  fetchDeleteSession,
+  fetchCreateBookmark,
+  fetchDeleteBookmark
 } from "./endpoints";
 
 import { 
@@ -24,7 +26,10 @@ import {
   MetricsProvidersRequest,
   UpdateSessionRequest,
   SessionResponse,
-  DeleteSessionResponse
+  DeleteSessionResponse,
+  CreateBookmarkRequest,  // Add this import
+  BookmarkResponse,
+  DeleteBookmarkResponse
 } from "./types";
 
 export class PStreamBackend {
@@ -109,6 +114,42 @@ export class PStreamBackend {
       throw new Error('Authentication required. Call loginComplete or registerComplete first.');
     }
     return fetchDeleteSession(this.backendUrl, sessionId, this.authToken);
+  }
+
+  /**
+   * Create or update a bookmark for the current user
+   * 
+   * @param userId The ID of the user
+   * @param tmdbId The TMDB ID of the content to bookmark
+   * @param request The bookmark data
+   * @returns The created/updated bookmark
+   */
+  async createBookmark(
+    userId: string,
+    tmdbId: string,
+    request: CreateBookmarkRequest
+  ): Promise<BookmarkResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchCreateBookmark(this.backendUrl, userId, tmdbId, request, this.authToken);
+  }
+
+  /**
+   * Delete a bookmark for the current user
+   * 
+   * @param userId The ID of the user
+   * @param tmdbId The TMDB ID of the content to remove from bookmarks
+   * @returns The deletion response
+   */
+  async deleteBookmark(
+    userId: string,
+    tmdbId: string
+  ): Promise<DeleteBookmarkResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchDeleteBookmark(this.backendUrl, userId, tmdbId, this.authToken);
   }
 }
 
