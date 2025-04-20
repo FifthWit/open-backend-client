@@ -4,7 +4,10 @@ import {
   fetchRegisterComplete,
   fetchUserInfo,
   fetchLoginStart,
-  fetchLoginComplete
+  fetchLoginComplete,
+  fetchMetricsProviders,
+  fetchUpdateSession,
+  fetchDeleteSession
 } from "./endpoints";
 
 import { 
@@ -17,7 +20,11 @@ import {
   LoginStartRequest,
   LoginStartResponse,
   LoginCompleteRequest,
-  LoginCompleteResponse
+  LoginCompleteResponse,
+  MetricsProvidersRequest,
+  UpdateSessionRequest,
+  SessionResponse,
+  DeleteSessionResponse
 } from "./types";
 
 export class PStreamBackend {
@@ -61,6 +68,47 @@ export class PStreamBackend {
       throw new Error('Authentication required. Call registerComplete first or set a token with setAuthToken().');
     }
     return fetchUserInfo(this.backendUrl, this.authToken);
+  }
+
+  /**
+   * Submit provider metrics to the server
+   * 
+   * @param request The metrics data to send
+   * @param method The HTTP method to use (POST or PUT)
+   * @returns A boolean indicating success
+   */
+  async sendProviderMetrics(
+    request: MetricsProvidersRequest, 
+    method: 'POST' | 'PUT' = 'POST'
+  ): Promise<boolean> {
+    return fetchMetricsProviders(this.backendUrl, request, method);
+  }
+
+  /**
+   * Update a session's device name
+   * 
+   * @param sessionId The ID of the session to update
+   * @param request The update request with new device name
+   * @returns The updated session
+   */
+  async updateSession(sessionId: string, request: UpdateSessionRequest): Promise<SessionResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchUpdateSession(this.backendUrl, sessionId, request, this.authToken);
+  }
+
+  /**
+   * Delete a session
+   * 
+   * @param sessionId The ID of the session to delete
+   * @returns The deleted session ID
+   */
+  async deleteSession(sessionId: string): Promise<DeleteSessionResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchDeleteSession(this.backendUrl, sessionId, this.authToken);
   }
 }
 
