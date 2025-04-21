@@ -5,13 +5,12 @@ import {
   DeleteBookmarkResponse,
   GetBookmarksResponse,
   BulkUpdateBookmarksRequest,
-  BulkUpdateBookmarksResponse 
+  BulkUpdateBookmarksResponse,
+  UpdateUserProfileRequest,
+  UpdateUserProfileResponse,
+  DeleteUserResponse
 } from '../types';
 
-/**
- * Fetch current user information
- * Requires authentication token to be set in the Authorization header
- */
 export async function fetchUserInfo(
   baseUrl: string,
   token: string
@@ -146,4 +145,62 @@ export async function fetchBulkUpdateBookmarks(
   }
 
   return await response.json() as BulkUpdateBookmarksResponse;
+}
+
+/**
+ * Update a user's profile
+ * 
+ * @param baseUrl The base URL of the API
+ * @param userId The ID of the user
+ * @param request The update request with new profile data
+ * @param token Authentication token
+ * @returns The updated user
+ */
+export async function fetchUpdateUserProfile(
+  baseUrl: string,
+  userId: string,
+  request: UpdateUserProfileRequest,
+  token: string
+): Promise<UpdateUserProfileResponse> {
+  const response = await fetch(`${baseUrl}/users/${userId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(request)
+  });
+
+  if (!response.ok) {
+    throw new Error(`fetchUpdateUserProfile error: ${response.status}`);
+  }
+
+  return await response.json() as UpdateUserProfileResponse;
+}
+
+/**
+ * Delete a user account
+ * 
+ * @param baseUrl The base URL of the API
+ * @param userId The ID of the user
+ * @param token Authentication token
+ * @returns The deletion response
+ */
+export async function fetchDeleteUser(
+  baseUrl: string,
+  userId: string,
+  token: string
+): Promise<DeleteUserResponse> {
+  const response = await fetch(`${baseUrl}/users/${userId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`fetchDeleteUser error: ${response.status}`);
+  }
+
+  return await response.json() as DeleteUserResponse;
 }

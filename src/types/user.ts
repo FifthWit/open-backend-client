@@ -1,4 +1,5 @@
 import { User, Session } from './auth';
+import { UserProfile } from './index';
 
 export interface BookmarkMeta {
   title: string;
@@ -33,3 +34,26 @@ export type GetBookmarksResponse = BookmarkResponse[];
 export interface BulkUpdateBookmarksRequest extends Array<BookmarkItem> {}
 
 export type BulkUpdateBookmarksResponse = BookmarkResponse[];
+
+export interface UpdateUserProfileRequest {
+  profile: {
+    icon: string;
+    colorA: string;
+    colorB: string;
+  }
+}
+
+export interface UpdateUserProfileResponse {
+  id: string;
+  publicKey: string;
+  namespace: string;
+  profile: UserProfile;
+  permissions: string[];
+  createdAt: Date;
+  lastLoggedIn: Date;
+}
+
+export interface DeleteUserResponse {
+  success: boolean;
+  message: string;
+}

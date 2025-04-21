@@ -18,7 +18,9 @@ import {
   fetchDeleteProgress,
   fetchImportProgress,
   fetchGetBookmarks,
-  fetchBulkUpdateBookmarks
+  fetchBulkUpdateBookmarks,
+  fetchUpdateUserProfile,
+  fetchDeleteUser
 } from "./endpoints";
 
 import { 
@@ -52,7 +54,10 @@ import {
   DeleteListResponse,
   GetBookmarksResponse,
   BulkUpdateBookmarksRequest,
-  BulkUpdateBookmarksResponse
+  BulkUpdateBookmarksResponse,
+  UpdateUserProfileRequest,
+  UpdateUserProfileResponse,
+  DeleteUserResponse
 } from "./types";
 
 export class PStreamBackend {
@@ -322,6 +327,36 @@ export class PStreamBackend {
       throw new Error('Authentication required. Call loginComplete or registerComplete first.');
     }
     return fetchBulkUpdateBookmarks(this.backendUrl, userId, bookmarks, this.authToken);
+  }
+
+  /**
+   * Update a user's profile
+   * 
+   * @param userId The ID of the user
+   * @param request The update request with new profile data
+   * @returns The updated user
+   */
+  async updateUserProfile(
+    userId: string,
+    request: UpdateUserProfileRequest
+  ): Promise<UpdateUserProfileResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchUpdateUserProfile(this.backendUrl, userId, request, this.authToken);
+  }
+
+  /**
+   * Delete a user account
+   * 
+   * @param userId The ID of the user
+   * @returns The deletion response
+   */
+  async deleteUser(userId: string): Promise<DeleteUserResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchDeleteUser(this.backendUrl, userId, this.authToken);
   }
 }
 
