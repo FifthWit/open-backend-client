@@ -3,7 +3,14 @@ import {
   UpdateProgressResponse, 
   DeleteProgressRequest, 
   DeleteProgressResponse,
-  ImportProgressResponse
+  ImportProgressResponseItem,
+  UserProgress,
+  GetUserRatingsResponse,
+  SetUserRatingRequest,
+  SetUserRatingResponse,
+  GetUserSessionsResponse,
+  UserSettings,
+  UpdateUserSettingsRequest
 } from '../types';
 
 /**
@@ -20,7 +27,7 @@ export async function fetchUpdateProgress(
   baseUrl: string,
   userId: string,
   tmdbId: string,
-  request: ProgressItem,
+  progress: ProgressItem,
   token: string
 ): Promise<UpdateProgressResponse> {
   const response = await fetch(`${baseUrl}/users/${userId}/progress/${tmdbId}`, {
@@ -29,7 +36,7 @@ export async function fetchUpdateProgress(
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify(request)
+    body: JSON.stringify(progress)
   });
 
   if (!response.ok) {
@@ -84,21 +91,141 @@ export async function fetchDeleteProgress(
 export async function fetchImportProgress(
   baseUrl: string,
   userId: string,
-  request: ProgressItem[],
+  progress: ProgressItem[],
   token: string
-): Promise<ImportProgressResponse> {
+): Promise<ImportProgressResponseItem> {
   const response = await fetch(`${baseUrl}/users/${userId}/progress/import`, {
-    method: 'PUT',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify(request)
+    body: JSON.stringify({ items: progress })
   });
 
   if (!response.ok) {
     throw new Error(`fetchImportProgress error: ${response.status}`);
   }
 
-  return await response.json() as ImportProgressResponse;
+  return await response.json() as ImportProgressResponseItem;
+}
+
+export async function fetchGetProgress(
+  baseUrl: string,
+  userId: string,
+  token: string
+): Promise<UserProgress[]> {
+  const response = await fetch(`${baseUrl}/users/${userId}/progress`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`fetchGetProgress error: ${response.status}`);
+  }
+
+  return await response.json() as UserProgress[];
+}
+
+export async function fetchGetUserRatings(
+  baseUrl: string,
+  userId: string,
+  token: string
+): Promise<GetUserRatingsResponse> {
+  const response = await fetch(`${baseUrl}/users/${userId}/ratings`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`fetchGetUserRatings error: ${response.status}`);
+  }
+
+  return await response.json() as GetUserRatingsResponse;
+}
+
+export async function fetchSetUserRating(
+  baseUrl: string,
+  userId: string,
+  rating: SetUserRatingRequest,
+  token: string
+): Promise<SetUserRatingResponse> {
+  const response = await fetch(`${baseUrl}/users/${userId}/ratings`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(rating)
+  });
+
+  if (!response.ok) {
+    throw new Error(`fetchSetUserRating error: ${response.status}`);
+  }
+
+  return await response.json() as SetUserRatingResponse;
+}
+
+export async function fetchGetUserSessions(
+  baseUrl: string,
+  userId: string,
+  token: string
+): Promise<GetUserSessionsResponse> {
+  const response = await fetch(`${baseUrl}/users/${userId}/sessions`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`fetchGetUserSessions error: ${response.status}`);
+  }
+
+  return await response.json() as GetUserSessionsResponse;
+}
+
+export async function fetchGetUserSettings(
+  baseUrl: string,
+  userId: string,
+  token: string
+): Promise<UserSettings> {
+  const response = await fetch(`${baseUrl}/users/${userId}/settings`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`fetchGetUserSettings error: ${response.status}`);
+  }
+
+  return await response.json() as UserSettings;
+}
+
+export async function fetchUpdateUserSettings(
+  baseUrl: string,
+  userId: string,
+  settings: UpdateUserSettingsRequest,
+  token: string
+): Promise<UserSettings> {
+  const response = await fetch(`${baseUrl}/users/${userId}/settings`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(settings)
+  });
+
+  if (!response.ok) {
+    throw new Error(`fetchUpdateUserSettings error: ${response.status}`);
+  }
+
+  return await response.json() as UserSettings;
 }

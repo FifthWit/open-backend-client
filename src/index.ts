@@ -20,7 +20,13 @@ import {
   fetchGetBookmarks,
   fetchBulkUpdateBookmarks,
   fetchUpdateUserProfile,
-  fetchDeleteUser
+  fetchDeleteUser,
+  fetchGetProgress,
+  fetchGetUserRatings,
+  fetchSetUserRating,
+  fetchGetUserSessions,
+  fetchGetUserSettings,
+  fetchUpdateUserSettings
 } from "./endpoints";
 
 import { 
@@ -45,7 +51,7 @@ import {
   UpdateProgressResponse,
   DeleteProgressRequest,
   DeleteProgressResponse,
-  ImportProgressResponse,
+  ImportProgressResponseItem,
   GetListsResponse,
   CreateListRequest,
   CreateListResponse,
@@ -57,7 +63,14 @@ import {
   BulkUpdateBookmarksResponse,
   UpdateUserProfileRequest,
   UpdateUserProfileResponse,
-  DeleteUserResponse
+  DeleteUserResponse,
+  UserProgress,
+  GetUserRatingsResponse,
+  SetUserRatingRequest,
+  SetUserRatingResponse,
+  GetUserSessionsResponse,
+  UserSettings,
+  UpdateUserSettingsRequest
 } from "./types";
 
 export class PStreamBackend {
@@ -228,7 +241,7 @@ export class PStreamBackend {
   async importProgress(
     userId: string,
     progress: ProgressItem[]
-  ): Promise<ImportProgressResponse> {
+  ): Promise<ImportProgressResponseItem> {
     if (!this.authToken) {
       throw new Error('Authentication required. Call loginComplete or registerComplete first.');
     }
@@ -357,6 +370,92 @@ export class PStreamBackend {
       throw new Error('Authentication required. Call loginComplete or registerComplete first.');
     }
     return fetchDeleteUser(this.backendUrl, userId, this.authToken);
+  }
+
+  /**
+   * Get all progress items for a user
+   * 
+   * @param userId The ID of the user
+   * @returns Array of progress items
+   */
+  async getProgress(userId: string): Promise<UserProgress[]> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchGetProgress(this.backendUrl, userId, this.authToken);
+  }
+
+  /**
+   * Get all ratings for a user
+   * 
+   * @param userId The ID of the user
+   * @returns All ratings for the user
+   */
+  async getUserRatings(userId: string): Promise<GetUserRatingsResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchGetUserRatings(this.backendUrl, userId, this.authToken);
+  }
+
+  /**
+   * Set a rating for a movie or TV show
+   * 
+   * @param userId The ID of the user
+   * @param rating The rating data
+   * @returns The updated rating
+   */
+  async setUserRating(
+    userId: string,
+    rating: SetUserRatingRequest
+  ): Promise<SetUserRatingResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchSetUserRating(this.backendUrl, userId, rating, this.authToken);
+  }
+
+  /**
+   * Get all sessions for a user
+   * 
+   * @param userId The ID of the user
+   * @returns Array of user sessions
+   */
+  async getUserSessions(userId: string): Promise<GetUserSessionsResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchGetUserSessions(this.backendUrl, userId, this.authToken);
+  }
+
+  /**
+   * Get user settings
+   * 
+   * @param userId The ID of the user
+   * @returns User settings
+   */
+  async getUserSettings(userId: string): Promise<UserSettings> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchGetUserSettings(this.backendUrl, userId, this.authToken);
+  }
+
+  /**
+   * Update user settings
+   * 
+   * @param userId The ID of the user
+   * @param settings The settings to update
+   * @returns The updated user settings
+   */
+  async updateUserSettings(
+    userId: string,
+    settings: UpdateUserSettingsRequest
+  ): Promise<UserSettings> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchUpdateUserSettings(this.backendUrl, userId, settings, this.authToken);
   }
 }
 
