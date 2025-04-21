@@ -1,16 +1,26 @@
 {
-  "name": "pstream-backend-client",
+  "name": "veto-api-client",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": [],
+  "keywords": ["api", "client", "typescript"],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "TypeScript client for PStream backend API",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fifthwit/vetoapi-client.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "typescript": "^5.8.3"

@@ -73,7 +73,9 @@ import {
   UpdateUserSettingsRequest
 } from "./types";
 
-export class PStreamBackend {
+export * from './types';
+
+export class VetoAPI {
   private readonly backendUrl: string;
   private authToken?: string;
 
