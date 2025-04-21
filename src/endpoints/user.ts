@@ -1,4 +1,12 @@
-import { UserInfoResponse, CreateBookmarkRequest, BookmarkResponse, DeleteBookmarkResponse } from '../types';
+import { 
+  UserInfoResponse, 
+  CreateBookmarkRequest, 
+  BookmarkResponse, 
+  DeleteBookmarkResponse,
+  GetBookmarksResponse,
+  BulkUpdateBookmarksRequest,
+  BulkUpdateBookmarksResponse 
+} from '../types';
 
 /**
  * Fetch current user information
@@ -81,4 +89,61 @@ export async function fetchDeleteBookmark(
   }
 
   return await response.json() as DeleteBookmarkResponse;
+}
+
+/**
+ * Get all bookmarks for a user
+ * 
+ * @param baseUrl The base URL of the API
+ * @param userId The ID of the user
+ * @param token Authentication token
+ * @returns Array of bookmarks
+ */
+export async function fetchGetBookmarks(
+  baseUrl: string,
+  userId: string,
+  token: string
+): Promise<GetBookmarksResponse> {
+  const response = await fetch(`${baseUrl}/users/${userId}/bookmarks`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`fetchGetBookmarks error: ${response.status}`);
+  }
+
+  return await response.json() as GetBookmarksResponse;
+}
+
+/**
+ * Bulk update bookmarks for a user
+ * 
+ * @param baseUrl The base URL of the API
+ * @param userId The ID of the user
+ * @param request The bookmarks to update
+ * @param token Authentication token
+ * @returns The updated bookmarks
+ */
+export async function fetchBulkUpdateBookmarks(
+  baseUrl: string,
+  userId: string,
+  request: BulkUpdateBookmarksRequest,
+  token: string
+): Promise<BulkUpdateBookmarksResponse> {
+  const response = await fetch(`${baseUrl}/users/${userId}/bookmarks`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(request)
+  });
+
+  if (!response.ok) {
+    throw new Error(`fetchBulkUpdateBookmarks error: ${response.status}`);
+  }
+
+  return await response.json() as BulkUpdateBookmarksResponse;
 }

@@ -21,3 +21,15 @@ export interface DeleteBookmarkResponse {
   success: boolean;
   tmdbId: string;
 }
+
+// New types for bookmarks endpoints
+export interface BookmarkItem {
+  tmdbId: string;
+  meta: BookmarkMeta;
+}
+
+export type GetBookmarksResponse = BookmarkResponse[];
+
+export interface BulkUpdateBookmarksRequest extends Array<BookmarkItem> {}
+
+export type BulkUpdateBookmarksResponse = BookmarkResponse[];

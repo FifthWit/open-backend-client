@@ -16,7 +16,9 @@ import {
   fetchDeleteList,
   fetchUpdateProgress,
   fetchDeleteProgress,
-  fetchImportProgress
+  fetchImportProgress,
+  fetchGetBookmarks,
+  fetchBulkUpdateBookmarks
 } from "./endpoints";
 
 import { 
@@ -47,7 +49,10 @@ import {
   CreateListResponse,
   UpdateListRequest,
   UpdateListResponse,
-  DeleteListResponse
+  DeleteListResponse,
+  GetBookmarksResponse,
+  BulkUpdateBookmarksRequest,
+  BulkUpdateBookmarksResponse
 } from "./types";
 
 export class PStreamBackend {
@@ -287,6 +292,36 @@ export class PStreamBackend {
       throw new Error('Authentication required. Call loginComplete or registerComplete first.');
     }
     return fetchDeleteList(this.backendUrl, userId, listId, this.authToken);
+  }
+
+  /**
+   * Get all bookmarks for a user
+   * 
+   * @param userId The ID of the user
+   * @returns Array of bookmarks
+   */
+  async getBookmarks(userId: string): Promise<GetBookmarksResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchGetBookmarks(this.backendUrl, userId, this.authToken);
+  }
+
+  /**
+   * Bulk update bookmarks for a user
+   * 
+   * @param userId The ID of the user
+   * @param bookmarks The bookmarks to update
+   * @returns The updated bookmarks
+   */
+  async bulkUpdateBookmarks(
+    userId: string,
+    bookmarks: BulkUpdateBookmarksRequest
+  ): Promise<BulkUpdateBookmarksResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchBulkUpdateBookmarks(this.backendUrl, userId, bookmarks, this.authToken);
   }
 }
 
