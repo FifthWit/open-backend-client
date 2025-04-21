@@ -3,4 +3,5 @@ export * from './auth';
 export * from './user';
 export * from './metrics';
 export * from './session';
-export * from './user';
+export * from './list';
+export * from './progress';

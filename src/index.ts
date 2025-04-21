@@ -9,7 +9,14 @@ import {
   fetchUpdateSession,
   fetchDeleteSession,
   fetchCreateBookmark,
-  fetchDeleteBookmark
+  fetchDeleteBookmark,
+  fetchGetLists,
+  fetchCreateList,
+  fetchUpdateList,
+  fetchDeleteList,
+  fetchUpdateProgress,
+  fetchDeleteProgress,
+  fetchImportProgress
 } from "./endpoints";
 
 import { 
@@ -27,9 +34,20 @@ import {
   UpdateSessionRequest,
   SessionResponse,
   DeleteSessionResponse,
-  CreateBookmarkRequest,  // Add this import
+  CreateBookmarkRequest,
   BookmarkResponse,
-  DeleteBookmarkResponse
+  DeleteBookmarkResponse,
+  ProgressItem,
+  UpdateProgressResponse,
+  DeleteProgressRequest,
+  DeleteProgressResponse,
+  ImportProgressResponse,
+  GetListsResponse,
+  CreateListRequest,
+  CreateListResponse,
+  UpdateListRequest,
+  UpdateListResponse,
+  DeleteListResponse
 } from "./types";
 
 export class PStreamBackend {
@@ -150,6 +168,125 @@ export class PStreamBackend {
       throw new Error('Authentication required. Call loginComplete or registerComplete first.');
     }
     return fetchDeleteBookmark(this.backendUrl, userId, tmdbId, this.authToken);
+  }
+
+  /**
+   * Update a progress item for tracking watch status
+   * 
+   * @param userId The ID of the user
+   * @param tmdbId The TMDB ID of the content
+   * @param progress The progress data to update
+   * @returns The updated progress item
+   */
+  async updateProgress(
+    userId: string,
+    tmdbId: string,
+    progress: ProgressItem
+  ): Promise<UpdateProgressResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchUpdateProgress(this.backendUrl, userId, tmdbId, progress, this.authToken);
+  }
+
+  /**
+   * Delete a progress item
+   * 
+   * @param userId The ID of the user
+   * @param tmdbId The TMDB ID of the content
+   * @param request Optional details for deletion
+   * @returns Information about the deleted items
+   */
+  async deleteProgress(
+    userId: string,
+    tmdbId: string,
+    request: DeleteProgressRequest = {}
+  ): Promise<DeleteProgressResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchDeleteProgress(this.backendUrl, userId, tmdbId, request, this.authToken);
+  }
+
+  /**
+   * Import multiple progress items at once
+   * 
+   * @param userId The ID of the user
+   * @param progress The progress items to import
+   * @returns The imported progress items
+   */
+  async importProgress(
+    userId: string,
+    progress: ProgressItem[]
+  ): Promise<ImportProgressResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchImportProgress(this.backendUrl, userId, progress, this.authToken);
+  }
+
+  /**
+   * Get all lists for a user
+   * 
+   * @param userId The ID of the user
+   * @returns All lists for the user
+   */
+  async getLists(userId: string): Promise<GetListsResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchGetLists(this.backendUrl, userId, this.authToken);
+  }
+
+  /**
+   * Create a new list for a user
+   * 
+   * @param userId The ID of the user
+   * @param request The list to create
+   * @returns The created list
+   */
+  async createList(
+    userId: string,
+    request: CreateListRequest
+  ): Promise<CreateListResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchCreateList(this.backendUrl, userId, request, this.authToken);
+  }
+
+  /**
+   * Update a list
+   * 
+   * @param userId The ID of the user
+   * @param request The update request
+   * @returns The updated list
+   */
+  async updateList(
+    userId: string,
+    request: UpdateListRequest
+  ): Promise<UpdateListResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchUpdateList(this.backendUrl, userId, request, this.authToken);
+  }
+
+  /**
+   * Delete a list
+   * 
+   * @param userId The ID of the user
+   * @param listId The ID of the list to delete
+   * @returns Confirmation of deletion
+   */
+  async deleteList(
+    userId: string,
+    listId: string
+  ): Promise<DeleteListResponse> {
+    if (!this.authToken) {
+      throw new Error('Authentication required. Call loginComplete or registerComplete first.');
+    }
+    return fetchDeleteList(this.backendUrl, userId, listId, this.authToken);
   }
 }
 
